@@ -26,3 +26,5 @@ const uploadStorage = async function (filePath) {
         fs.unlinkSync(filePath)
     }
 }
+
+export {uploadOnCloudinary}
