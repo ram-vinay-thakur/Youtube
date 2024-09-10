@@ -36,12 +36,12 @@ const registerUser = asyncHandler(async (req, res, next) => {
   }
 
   const userSaved = await User.create({
-    fullName,
-    email,
     username:username.toLowerCase(),
-    password,
+    email:email,
+    fullName:fullName,
     avatar:avatar.url,
-    coverImage:coverImage?.url || ""
+    coverImage:coverImage?.url || "",
+    password:password,
   });
 
   const savedUserCheck = await User.findById(userSaved._id).select(
