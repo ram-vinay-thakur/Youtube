@@ -7,11 +7,19 @@ import ApiResponse from "../utils/ApiResponse.js";
 // user.controller.js (without asyncHandler for testing)
 const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, fullName, password } = req.body;
-  if (
-    [username, email, fullName, password].some((data) => data?.trim() === "")
-  ) {
-    throw new ApiError(400, "All fields are Required");
+  if (!username?.trim()) {
+    throw new ApiError(400, "Username is required");
   }
+  if (!email?.trim()) {
+    throw new ApiError(400, "Email is required");
+  }
+  if (!fullName?.trim()) {
+    throw new ApiError(400, "Full name is required");
+  }
+  if (!password?.trim()) {
+    throw new ApiError(400, "Password is required");
+  }
+  
 
   const existingUser = await User.findOne({
     $or: [{ email }, { username }],
@@ -20,9 +28,12 @@ const registerUser = asyncHandler(async (req, res, next) => {
   if (existingUser) {
     throw new ApiError(409, "User with this email already exists.");
   }
-
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  let coverImageLocalPath;
+
+  if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+    coverImageLocalPath = req.files?.coverImage[0]?.path;
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
