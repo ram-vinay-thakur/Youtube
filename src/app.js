@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
+import { ApiError } from "./utils/ApiError.js";
 
 const app = express();
 
@@ -20,13 +21,22 @@ import userRouter from './routes/user.routes.js';
 console.log('route done')
 app.use("/api/v1/users", userRouter);
 app.use((err, req, res, next) => {
-    console.error(err.stack); // Log the error details to the console (or to a file)
+    if (err instanceof multer.MulterError) {
+        // Handle Multer-specific errors
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(413).json({ message: 'File exceeds the maximum size limit of 10MB.' });
+        }
+        return res.status(400).json({ message: err.message });
+    }
 
-    // Send a response to the client
-    res.status(err.statusCode || 500).json({
-        message: err.message || 'Internal Server Error',
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }) // Include stack trace only in development
-    });
+    // Handle other errors
+    if (err instanceof ApiError) {
+        return res.status(err.statusCode).json({ message: err.message });
+    }
+
+    // General error handling
+    return res.status(500).json({ message: 'An unexpected error occurred.' });
 });
+
 
 export default app;
