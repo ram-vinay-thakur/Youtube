@@ -13,17 +13,22 @@ const storage = multer.diskStorage({
 
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 
+// File filter function
 const fileFilter = function (req, file, cb) {
-  if (!allowedMimeTypes.includes(req.file.mimetype)) {
-    return res.status(415).json({ message: "Unsupported image format." });
+  // Check file type
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    return cb(new ApiError(415, "Unsupported image format."), false);
   }
-  return true;
-}
-// Initialize Multer with the storage settings
+  
+  // Proceed to upload
+  cb(null, true);
+};
+
+// Initialize Multer with the storage settings and limits
 export const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits:{
-    fileSize: 1024 * 1024 * 10 // 5MB
+  limits: {
+    fileSize: 1024 * 1024 * 10 // 10 MB limit
   }
 });
