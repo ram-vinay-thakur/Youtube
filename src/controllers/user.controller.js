@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import compressAndReplaceImage from "../utils/image-compression.js";
 
 // user.controller.js (without asyncHandler for testing)
 const registerUser = asyncHandler(async (req, res, next) => {
@@ -38,6 +39,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
   }
+
+  await compressAndReplaceImage(avatarLocalPath, { width: 800, quality: 80 });
+  await compressAndReplaceImage(coverImageLocalPath, { width: 800, quality: 80 });
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);

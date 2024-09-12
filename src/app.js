@@ -2,6 +2,7 @@ import express, { json } from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import { ApiError } from "./utils/ApiError.js";
+import multer from "multer";
 
 const app = express();
 
@@ -24,7 +25,9 @@ app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         // Handle Multer-specific errors
         if (err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(413).json({ message: 'File exceeds the maximum size limit of 10MB.' });
+            return res.status(413).json({ 
+                message: 'File exceeds the maximum size limit of 10MB.' 
+            });
         }
         return res.status(400).json({ message: err.message });
     }
