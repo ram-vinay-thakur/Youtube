@@ -15,7 +15,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   // Find the empty fields
   const emptyFields = Object.keys(dataFromClient).filter(key =>
-    !dataFromClient[key] 
+    !dataFromClient[key]
   );
 
   if (emptyFields.length > 0) {
@@ -128,10 +128,36 @@ const loginUser = asyncHandler(async (req, res) => {
     }, "User Logged in Successfully!"
     ))
 
-})
+});
+
+const logOutUser = (req, res) => {
+  const user = req.user._id;
+  const userinDB = User.findByIdAndUpdate(user,
+    {
+      $set:{
+        refreshToken:undefined
+      }
+    },
+    {
+      new:true
+    }
+  );
+
+  const cookieOption = {
+    httpOnly: true,
+    secure: true
+  }
+
+  return res
+  .status(200)
+  .clearCookie("accessToken", cookieOption)
+  .clearCookie("refreshToken", cookieOption)
+  .json(new ApiResponse(200, {}, "User Logged Out Successfully!"))
+}
 
 
 export {
   registerUser,
-  loginUser
+  loginUser,
+  logOutUser
 };
