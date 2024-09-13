@@ -18,9 +18,9 @@ app.use(cookieParser());
 app.use(express.static("public"));
 
 // Routes
-import userRouter from './routes/user.routes.js';
+import router from "./routes/user.routes.js";
 console.log('route done')
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", router);
 // app.use((err, req, res, next) => {
 //     if (err instanceof multer.MulterError) {
 //         // Handle Multer-specific errors

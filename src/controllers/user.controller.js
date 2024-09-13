@@ -75,8 +75,11 @@ const generateAccessandRefreshToken = async (userId) => {
 
     userinDB.refreshToken = refreshToken;
     await userinDB.save({ validateBeforeSave: false })
-
-    return { accessToken, refreshToken }
+    const tokens = {
+      accessToken: accessToken,
+      refreshToken: refreshToken
+    };
+    return tokens;
   } catch (err) {
     throw new ApiError(500, err.message);
   };
@@ -88,10 +91,9 @@ const loginUser = asyncHandler(async (req, res) => {
   // check password
   // access and refresh token generate
   // send cookie
-
   const { email, username, password } = req.body;
 
-  if (!username || !email) {
+  if (!(username || email)) {
     throw new ApiError(400, "Username or email is required!");
   };
 
@@ -109,7 +111,10 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid User Credentials")
   };
 
-  const { accessToken, refreshToken } = generateAccessandRefreshToken(userSaved._id);
+  const tokens = await generateAccessandRefreshToken(userSaved._id);
+  const { accessToken, refreshToken } = tokens;
+  console.log(accessToken, refreshToken)
+
   const loggedInUser = await User.findById(userSaved._id).select(" -password -refreshToken");
 
   const cookieOption = {

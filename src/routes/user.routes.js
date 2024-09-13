@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer.js'; // Import your multer configuration
-import { registerUser } from '../controllers/user.controller.js';
+import { registerUser, loginUser, logOutUser } from '../controllers/user.controller.js';
+import { verifyJWT } from '../middlewares/auth.js';
 
-const userRouter = Router();
+const router = Router();
 
 // Apply multer middleware for handling file uploads
-userRouter.route('/register').post(upload.fields([
+router.route('/register').post(upload.fields([
     {
         name: 'avatar',
         maxCount: 1
@@ -14,6 +15,9 @@ userRouter.route('/register').post(upload.fields([
         maxCount: 1
     }
 ]),
-    registerUser);
+    registerUser
+);
+router.route("/login").post(loginUser);
+router.route("/logout").post(verifyJWT, logOutUser)
 
-export default userRouter;
+export default router;
