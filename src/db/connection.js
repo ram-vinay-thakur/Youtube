@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const connectDB = async () => {
     try {
-        const connection = await mongoose.connect(`${process.env.MONGO_DB_COMPASS_URI}${process.env.DB_NAME}`, {
+        const connection = await mongoose.connect(`mongodb+srv://devraj:${process.env.MONGO_PASSWORD}@${process.env.DB_NAME}.w2u9n.mongodb.net/`, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
