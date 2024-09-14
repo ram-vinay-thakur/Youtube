@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/multer.js'; // Import your multer configuration
-import { registerUser, loginUser, logOutUser } from '../controllers/user.controller.js';
+import { registerUser, loginUser, logOutUser, refreshToken } from '../controllers/user.controller.js';
 import { verifyJWT } from '../middlewares/auth.js';
 
 const router = Router();
@@ -18,6 +18,7 @@ router.route('/register').post(upload.fields([
     registerUser
 );
 router.route("/login").post(loginUser);
-router.route("/logout").post(verifyJWT, logOutUser)
+router.route("/logout").post(verifyJWT, logOutUser);
+router.route("refresh-token").post(refreshToken);
 
 export default router;
