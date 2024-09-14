@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import { compressAndReplaceImage } from "../utils/image-compression.js";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, fullName, password } = req.body;
@@ -41,10 +42,12 @@ const registerUser = asyncHandler(async (req, res, next) => {
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
   }
-  console.log('after cloudinary!')
+  await compressAndReplaceImage(avatarLocalPath);
+  await compressAndReplaceImage(coverImageLocalPath);
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-  console.log('after cloudinary')
+
   if (!avatar) {
     throw new ApiError(400, "Avatar upload failed");
   }
