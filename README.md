@@ -80,6 +80,12 @@ To get started with the project, follow these steps:
     MONGODB_URI=your-mongodb-uri
     MONGO_PASSWORD=your-mongodb-password
     DB_NAME=your-db-name
+    PORT=your-specified-port
+    CORS_ORIGIN=your-allowed-sources
+    ACCESS_TOKEN_SECRET=your-access-token
+    ACCESS_TOKEN_EXPIRY=your-specified-time
+    REFRESH_TOKEN_SECRET=your-refresh-token
+    REFRESH_TOKEN_EXPIRY=your-specified-time
     ```
 
 4. **Run the Server**:
@@ -110,4 +116,3 @@ If you'd like to contribute, feel free to fork the repository and create a pull 
 ## License
 
 This project is licensed under the MIT License.
-"""
