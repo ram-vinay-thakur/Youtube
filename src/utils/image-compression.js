@@ -16,9 +16,7 @@ const compressAndReplaceImage = async (inputPath) => {
     fs.rename(tempPath, inputPath, (err) => {
       if (err) {
         console.error('Error replacing image:', err);
-      } else {
-        console.log('Image compressed and replaced successfully');
-      }
+      } 
     });
   } catch (error) {
     console.error('Error compressing image:', error);
