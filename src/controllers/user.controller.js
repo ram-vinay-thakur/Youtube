@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { compressAndReplaceImage } from "../utils/image-compression.js";
 import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, fullName, password } = req.body;
@@ -67,7 +68,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
   );
 
   return res.status(201).json(
-    new ApiResponse(200, savedUserCheck, "User Registered Successfully!")
+    new ApiResponse(201, savedUserCheck, "User Registered Successfully!")
   )
 });
 
@@ -263,12 +264,12 @@ const updateAvatar = asyncHandler(async (req, res) => {
       $set: {
         avatar: avatar.url
       }
-    },{new:true}
+    }, { new: true }
   ).select("-password -refreshToken");
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, user, "Avatar Uploaded Successfully!"))
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Uploaded Successfully!"))
 });
 
 const updatecoverImage = asyncHandler(async (req, res) => {
@@ -288,14 +289,73 @@ const updatecoverImage = asyncHandler(async (req, res) => {
       $set: {
         coverImage: coverImage.url
       }
-    },{new:true}
+    }, { new: true }
   ).select("-password -refreshToken");
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, user, "Avatar Uploaded Successfully!"))
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Uploaded Successfully!"))
 });
 
+const getUserChhanelProfile = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+  if (!username) {
+    throw new ApiError(400, "Username is required");
+  };
+
+  const user = await User.aggregate([
+    {
+      $match: {
+        username: username?.toLowerCase()  // Match user by username (case-insensitive)
+      }
+    },
+    {
+      $lookup: {
+        from: "subscriptions",             // Use the correct collection name for subscriptions
+        localField: "_id",
+        foreignField: "channel",        // Match where the user is the subscriber
+        as: "subscribers"                  // Store the result in the "subscribers" field
+      }
+    },
+    {
+      $lookup: {
+        from: "subscriptions",             // Again, use the correct collection name
+        localField: "_id",
+        foreignField: "subscriber",           // Match where the user is the channel
+        as: "subscribedTo"                 // Store the result in the "subscribedTo" field
+      }
+    },
+    {
+      $addFields: {
+        subscriberCount: {                 // Add a field for the count of subscribers
+          $size: "$subscribers"            // Count the elements in the "subscribers" array
+        },
+        channelsSubscribedToCount: {       // Add a field for the count of channels the user is subscribed to
+          $size: "$subscribedTo"           // Count the elements in the "subscribedTo" array
+        },
+        isSubscribed: {
+          $cond: {
+            if: { $in: [mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
+            then: true,
+            else: false
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        fullName: 1,
+        username: 1,
+        subscriberCount: 1,
+        channelsSubscribedToCount: 1,
+        isSubscribed: 1,
+        avatardd: 1,
+        coverImage: 1,
+        email: 1
+      }
+    }
+  ]);
+})
 
 export {
   registerUser,
@@ -304,6 +364,6 @@ export {
   refreshAccessandRefreshTokens,
   getCurrentUser,
   updateAccountDetail,
-  updateUserPassword
-
+  updateUserPassword,
+  getUserChhanelProfile
 };
