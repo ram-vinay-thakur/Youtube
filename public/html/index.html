@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register User</title>
+</head>
+<body>
+
+    <h1>Register User</h1>
+
+    <form action="/api/v1/users/register" method="POST" enctype="multipart/form-data">
+        <!-- Username -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br><br>
+
+        <!-- Email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br><br>
+
+        <!-- Full Name -->
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" required>
+        <br><br>
+
+        <!-- Password -->
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br><br>
+
+        <!-- Avatar (required) -->
+        <label for="avatar">Upload Avatar:</label>
+        <input type="file" id="avatar" name="avatar" accept="image/*" required>
+        <br><br>
+
+        <!-- Cover Image (optional) -->
+        <label for="coverImage">Upload Cover Image:</label>
+        <input type="file" id="coverImage" name="coverImage" accept="image/*">
+        <br><br>
+
+        <!-- Submit Button -->
+        <button type="submit">Register</button>
+    </form>
+
+</body>
+</html>

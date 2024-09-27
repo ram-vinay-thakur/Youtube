@@ -1,6 +1,7 @@
 import multer from "multer";
 import { ApiError } from '../utils/ApiError.js';
 
+console.log('in multer')
 // Set up storage with Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
